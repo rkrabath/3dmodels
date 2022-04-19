@@ -107,4 +107,21 @@ bottom_bracket();
 
 
 
+function bezier4(points) =
+let (s = 1.0 / $fn)
+[for(t = 0, i = 0; i < $fn + 1; t = t + s, i = i + 1)
+       (pow(1 - t, 3)             * points[0])
++  (3 * pow(1 - t, 2) * pow(t, 1) * points[1])
++  (3 * pow(1 - t, 1) * pow(t, 2) * points[2])
++  (                    pow(t, 3) * points[3])
+];
 
+module plot2d(points, size) {
+  for(point = points) {
+    translate(concat(point, 0))
+      circle(r = size);
+  }
+}
+
+points = bezier4([[0,0],[-50,-50],[100,-100],[0,-150]]);
+plot2d(points, 4);
