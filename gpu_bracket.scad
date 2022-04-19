@@ -1,3 +1,5 @@
+$fn=100;
+
 
 module assembly_post(width, depth){
     base_dim = width+5;
@@ -29,6 +31,8 @@ module top_bracket(){
 
     screw_1_location = [depth_of_bracket - depth_of_mounting_hole,9.9,-.001];
     screw_2_location = [depth_of_bracket - depth_of_mounting_hole,30.1,-.001];
+    screw_3_location = [depth_of_bracket - depth_of_mounting_hole+4.4,16.5,-.001];
+    screw_4_location = [depth_of_bracket - depth_of_mounting_hole+4.4,34.7,-.001];
     difference(){
         cube([depth_of_bracket, 39.4, 5.4]);
         union() {
@@ -36,17 +40,21 @@ module top_bracket(){
                 cylinder(r=width_of_mounting_screws, h=5.5);
             translate(screw_2_location)
                 cylinder(r=width_of_mounting_screws, h=5.5);
+            translate(screw_3_location)
+                cylinder(r=width_of_mounting_screws, h=5.5);
+            translate(screw_4_location)
+                cylinder(r=width_of_mounting_screws, h=5.5);
         }
     }
     
     // Assembly sockets
-    translate([5,-2.5+.001,0])    
+    translate([5,-5+.001,0])
         assembly_socket(5, 5.4);
-    translate([15,-2.5+.001,0])    
+    translate([15,-5+.001,0])
         assembly_socket(5, 5.4);
-    translate([5,41.9-.001,0])    
+    translate([5,44.4-.001,0])
         assembly_socket(5, 5.4);
-    translate([15,41.9-.001,0])    
+    translate([15,44.4-.001,0])
         assembly_socket(5, 5.4);
 }
 
@@ -65,5 +73,5 @@ module strut(thickness, height){
 //assembly_socket(5, 5.4);
 translate([-50,20,20])
 top_bracket();
-translate([-45,17.5,-5])
-strut(8, 50);
+//translate([-45,17.5,-5])
+//strut(8, 50);
