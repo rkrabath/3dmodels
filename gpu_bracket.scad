@@ -1,5 +1,7 @@
 $fn=100;
 
+width_of_mounting_screws = 2.3; // TODO: Measure mounting screws
+
 
 module assembly_post(width, depth){
     base_dim = width+5;
@@ -27,7 +29,6 @@ module top_bracket(){
     // Top bracket
     depth_of_bracket = 20;
     depth_of_mounting_hole = 9;
-    width_of_mounting_screws = 2.3; // TODO: Measure mounting screws
 
     screw_1_location = [depth_of_bracket - depth_of_mounting_hole,9.9,-.001];
     screw_2_location = [depth_of_bracket - depth_of_mounting_hole,30.1,-.001];
@@ -58,6 +59,33 @@ module top_bracket(){
         assembly_socket(5, 5.4);
 }
 
+module bottom_bracket(){
+    width_of_mounting_plate = 12;
+    length_of_mounting_plate = 140;
+    wall_thickness = 6;
+    outer_dims = [
+        length_of_mounting_plate + 2*wall_thickness,
+        width_of_mounting_plate + 2*wall_thickness,
+        10
+    ];
+    
+    difference() {
+        cube(outer_dims);
+        union() {
+            // Mounting plate cut-out
+            translate([5,6,5+.001])
+                cube([length_of_mounting_plate, width_of_mounting_plate, 5]);
+            translate([22,18-.001,5.001])
+                cube([102, 7.002, 5]);
+            // screw holes
+            translate([wall_thickness+5,6+width_of_mounting_plate/2,0-.001])
+                cylinder(r=width_of_mounting_screws, h=10.001);
+            translate([length_of_mounting_plate+wall_thickness-6-5,6+width_of_mounting_plate/2,0-.001])
+                cylinder(r=width_of_mounting_screws, h=10.001);
+        }
+    }
+}
+
 
 module strut(thickness, height){
     cube([thickness, thickness, height], center=true);
@@ -73,5 +101,10 @@ module strut(thickness, height){
 //assembly_socket(5, 5.4);
 translate([-50,20,20])
 top_bracket();
+bottom_bracket();
 //translate([-45,17.5,-5])
 //strut(8, 50);
+
+
+
+
