@@ -129,6 +129,18 @@ bottom_bracket();
 frame();
 
 
+function incenter_point(A,B,C) = 
+    let(
+        a = norm(B-C),
+        b = norm(A-C),
+        c = norm(A-B),
+        p = a + b + c,
+        Ox = (a * A.x + b * B.x + c * C.x) / p,
+        Oy = (a * A.y + b * B.y + c * C.y) / p,
+        Oz = (a * A.z + b * B.z + c * C.z) / p
+    )
+[Ox, Oy, Oz];
+
 
 function bezier4(points) =
 let (s = 1.0 / $fn)
