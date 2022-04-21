@@ -1,4 +1,4 @@
-$fn=100;
+$fn=200;
 
 width_of_mounting_screws = 2.3; // TODO: Measure mounting screws
 
@@ -102,8 +102,8 @@ module triangle(side1, side2, thickness){
     hyp = sqrt(side1*side1 + side2*side2);
     angle = asin(side2/hyp);
 
-    translate([0,thickness,side1])
-        rotate([90,90,0])
+    rotate([0,90,-90])
+        translate([-side1,0,-thickness])
             difference(){
                 cube([side1, side2, thickness]);
                 translate([0,0,-.001])
@@ -141,6 +141,8 @@ translate([50,-20,-10])
 bottom_bracket();
 //translate([-45,17.5,-5])
 //strut(8, 50);
+translate([-30, 12.5,120])
+rotate([0,180,0])
 frame();
 
 
@@ -174,4 +176,6 @@ module plot2d(points, size) {
 }
 
 points = bezier4([[0,0],[-50,-50],[100,-100],[0,-150]]);
-plot2d(points, 4);
+//plot2d(points, 4);
+
+
