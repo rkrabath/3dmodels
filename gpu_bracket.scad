@@ -97,13 +97,36 @@ module strut(thickness, height){
 }
 
 
+
+module triangle(side1, side2, thickness){
+    hyp = sqrt(side1*side1 + side2*side2);
+    angle = asin(side2/hyp);
+
+    translate([0,thickness,side1])
+        rotate([90,90,0])
+            difference(){
+                cube([side1, side2, thickness]);
+                translate([0,0,-.001])
+                    rotate([0,0,angle])
+                        cube([hyp, hyp, thickness+.002]);
+            }
+}
+
+
+module frame(){
+    triangle(30, 20, 5);
+
+}
+
 //assembly_post(5, 5.4);
 //assembly_socket(5, 5.4);
-translate([-50,20,20])
+translate([-50,20,120])
 top_bracket();
+translate([50,-20,-10])
 bottom_bracket();
 //translate([-45,17.5,-5])
 //strut(8, 50);
+frame();
 
 
 
