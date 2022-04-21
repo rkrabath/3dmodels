@@ -114,8 +114,23 @@ module triangle(side1, side2, thickness){
 
 
 module frame(){
-    triangle(30, 20, 5);
-
+    height = 50;
+    base =  20;
+    thickness = 5;
+    
+    
+    hyp = sqrt(pow(height,2) + pow(base,2));
+    main_incircle_radius = (height * base) / (height+base+hyp) * .85;
+    main_incircle_point = incenter_point([0, height, 0], [base, 0, 0], [0,0,0]);
+    echo(main_incircle_point);
+    point = [main_incircle_point.x, -.001, main_incircle_point.y];
+    difference(){
+        triangle(height, base, thickness);  // TODO:  This should be a flange, not a triangle.  Inscribe an oval instead of a rotated square!
+        
+        translate(point)
+            rotate([-90,0,0])
+                cylinder(r=main_incircle_radius, h=thickness+.002);
+    }
 }
 
 //assembly_post(5, 5.4);
