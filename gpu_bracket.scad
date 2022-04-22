@@ -178,4 +178,15 @@ module plot2d(points, size) {
 points = bezier4([[0,0],[-50,-50],[100,-100],[0,-150]]);
 //plot2d(points, 4);
 
+module card(){
+    cube([12.5,43.5,1]);
+    translate([11.5,0,-121])
+        cube([1,38,121]);
+    translate([12.5,13,7.5-98])
+        cube([156+29,25,98]);
+    translate([35.5+12.5,25+11,-105])
+        cube([112,2,15]);
+}
+
+card();
 
