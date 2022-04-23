@@ -125,23 +125,56 @@ module frame(){
     echo(main_incircle_point);
     point = [main_incircle_point.x, -.001, main_incircle_point.y];
     difference(){
-        triangle(height, base, thickness);  // TODO:  This should be a flange, not a triangle.  Inscribe an oval instead of a rotated square!
+    //    triangle(height, base, thickness);  // TODO:  This should be a flange, not a triangle.  Inscribe an oval instead of a rotated square!
         
-        translate(point)
-            rotate([-90,0,0])
-                cylinder(r=main_incircle_radius, h=thickness+.002);
+    //    translate(point)
+    //        rotate([-90,0,0])
+    //            cylinder(r=main_incircle_radius, h=thickness+.002);
+    }
+    curve_height = height*.9;
+    curve_base = base*.9;
+    points = [[0,0],[0,.75*curve_height],[curve_base*.25,curve_height],[curve_base,curve_height]];
+    rotate([-90,0,0])
+        translate([base*.1, -height*.01, 0])
+        {
+                        
+            // Right angle bracket
+            translate([-1.5,height-.001,0])
+                cube([base, height*.01, thickness]);
+            translate([-1.5,0,0])
+                cube([height*.01, height, thickness]);
+            
+            // Bottom curve
+            plot3d(bezier4(points),height*.005,thickness);
+            
+            // Distal ring
+            translate([base*.8, height*.95, 0])
+                ring(height*.1/2, max(height*.1/2-.5,height*.1/2*.60), thickness);
+
+            // TODO:  There's a triangle described by verticies 75% of the way down the base&height.  Inscribe a circle in it.
+        }
+
+       
+}
+
+module ring(od, id, length){
+    difference()
+    {
+        cylinder(r=od, h=length);
+        translate([0,0,-.001])
+            cylinder(r=id, h=length+.002);
     }
 }
 
-//assembly_post(5, 5.4);
-//assembly_socket(5, 5.4);
-translate([-50,20,120])
-top_bracket();
-translate([50,-20,-10])
-bottom_bracket();
-//translate([-45,17.5,-5])
-//strut(8, 50);
-translate([-30, 12.5,120])
+
+
+//translate([-50,20,120])  top_bracket();
+
+//translate([50,-20,-10])  bottom_bracket();
+
+
+
+translate([-30, 12.5,70])
 rotate([0,180,0])
 frame();
 
@@ -175,8 +208,14 @@ module plot2d(points, size) {
   }
 }
 
-points = bezier4([[0,0],[-50,-50],[100,-100],[0,-150]]);
-//plot2d(points, 4);
+module plot3d(points, width, length) {
+  for(point = points) {
+    translate(concat(point, 0))
+      cylinder(r = width, h=length);
+  }
+}
+
+
 
 module card(){
     cube([12.5,43.5,1]);
@@ -188,5 +227,6 @@ module card(){
         cube([112,2,15]);
 }
 
-card();
+
+//translate([0,500,110])  card();
 
