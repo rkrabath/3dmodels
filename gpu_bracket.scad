@@ -116,7 +116,8 @@ module triangle(side1, side2, thickness){
 module frame(){
     height = 50;
     base =  20;
-    thickness = 5;
+    width = 5;
+    thickness = max(2,height*.01);
     
     curve_height = height;
     curve_base = base*.9;
@@ -133,34 +134,31 @@ module frame(){
                         
             // Right angle bracket
             //translate([-1.5,height-.001,0])
-                cube([base, thickness, height*.01]);
+                cube([base, width, thickness]);
             //translate([-1.5,0,0])
-                cube([height*.01, thickness, height]);
+                cube([thickness, width, height]);
             
             // Bottom curve
-    
-            //plot3d(bezier4(points),height*.005,thickness);
-            //translate([base*.1, 0, height*.1])
-            line(bezier4(points), height*.01, thickness);
+            line(bezier4(points), thickness, width);
             
             
             // Distal ring
-            ring_od = curve_height*.05;
-            ring_id = ring_od - curve_height*.01;
-            translate([base*.9, 0, ring_od+height*.01])
+            ring_od = points[3].z - 1.99*thickness;
+            ring_id = ring_od - thickness;
+            translate([base*.9, 0, ring_od+thickness])
                rotate([-90,0,0])
-                ring(ring_od, ring_id, thickness);
+                ring(ring_od, ring_id, width);
             
-            main_icp_base = base*.75;
-            main_icp_height = height*.75;
-            a = [height*.01,0,height*.01];
-            b = [main_icp_base,0,height*.01];
-            c = [height*.01,0,main_icp_height];
+            main_icp_base = base*.75-thickness;
+            main_icp_height = height*.75-thickness;
+            a = [thickness,0,thickness];
+            b = [main_icp_base,0,thickness];
+            c = [thickness,0,main_icp_height];
             main_icp = incenter_point(a,b,c);
             hyp = sqrt(pow(main_icp_base,2) + pow(main_icp_height,2));
             main_od = (main_icp_height * main_icp_base) / (main_icp_height+main_icp_base+hyp);
-            main_id = main_od - curve_height*.01;
-            translate(main_icp)rotate([-90,0,0])ring(main_od, main_id, thickness);
+            main_id = main_od - thickness;
+            translate(main_icp)rotate([-90,0,0])ring(main_od, main_id, width);
         }
 
        
@@ -205,7 +203,7 @@ module ring(od, id, length){
 
 
 //translate([-30, 12.5,70])
-//rotate([0,180,0])
+rotate([90,0,0])
 frame();
 
 
