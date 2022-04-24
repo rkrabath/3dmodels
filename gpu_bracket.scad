@@ -1,4 +1,4 @@
-$fn=200;
+$fn=100;
 
 width_of_mounting_screws = 2.3; // TODO: Measure mounting screws
 
@@ -118,44 +118,74 @@ module frame(){
     base =  20;
     thickness = 5;
     
-    
-    hyp = sqrt(pow(height,2) + pow(base,2));
-    main_incircle_radius = (height * base) / (height+base+hyp) * .85;
-    main_incircle_point = incenter_point([0, height, 0], [base, 0, 0], [0,0,0]);
-    echo(main_incircle_point);
-    point = [main_incircle_point.x, -.001, main_incircle_point.y];
-    difference(){
-    //    triangle(height, base, thickness);  // TODO:  This should be a flange, not a triangle.  Inscribe an oval instead of a rotated square!
-        
-    //    translate(point)
-    //        rotate([-90,0,0])
-    //            cylinder(r=main_incircle_radius, h=thickness+.002);
-    }
-    curve_height = height*.9;
+    curve_height = height;
     curve_base = base*.9;
-    points = [[0,0],[0,.75*curve_height],[curve_base*.25,curve_height],[curve_base,curve_height]];
-    rotate([-90,0,0])
-        translate([base*.1, -height*.01, 0])
+    points = [
+        [curve_height*.01,0,curve_height],
+        [curve_height*.01,0,curve_height*.75],
+        [base*.25,0,curve_height*.11],
+        [base,0,curve_height*.11]
+    ];
+    
+    
+
         {
                         
             // Right angle bracket
-            translate([-1.5,height-.001,0])
-                cube([base, height*.01, thickness]);
-            translate([-1.5,0,0])
-                cube([height*.01, height, thickness]);
+            //translate([-1.5,height-.001,0])
+                cube([base, thickness, height*.01]);
+            //translate([-1.5,0,0])
+                cube([height*.01, thickness, height]);
             
             // Bottom curve
-            plot3d(bezier4(points),height*.005,thickness);
+    
+            //plot3d(bezier4(points),height*.005,thickness);
+            //translate([base*.1, 0, height*.1])
+            line(bezier4(points), height*.01, thickness);
+            
             
             // Distal ring
-            translate([base*.8, height*.95, 0])
-                ring(height*.1/2, max(height*.1/2-.5,height*.1/2*.60), thickness);
-
-            // TODO:  There's a triangle described by verticies 75% of the way down the base&height.  Inscribe a circle in it.
+            ring_od = curve_height*.05;
+            ring_id = ring_od - curve_height*.01;
+            translate([base*.9, 0, ring_od+height*.01])
+               rotate([-90,0,0])
+                ring(ring_od, ring_id, thickness);
+            
+            main_icp_base = base*.75;
+            main_icp_height = height*.75;
+            a = [height*.01,0,height*.01];
+            b = [main_icp_base,0,height*.01];
+            c = [height*.01,0,main_icp_height];
+            main_icp = incenter_point(a,b,c);
+            hyp = sqrt(pow(main_icp_base,2) + pow(main_icp_height,2));
+            main_od = (main_icp_height * main_icp_base) / (main_icp_height+main_icp_base+hyp);
+            main_id = main_od - curve_height*.01;
+            translate(main_icp)rotate([-90,0,0])ring(main_od, main_id, thickness);
         }
 
        
 }
+
+
+module line(points, thickness, width) {
+    
+    translate([0,width,0])
+        rotate([90,0,0])
+            linear_extrude(height=width)
+                projection()
+                    rotate([-90,0,0])
+                    {
+                    for(i=[0:len(points)-1]){
+                        j = i + 1;
+                        v = str(points[j]) == "undef" ? points[i-1] - points[i] : points[i] - points[j];
+                        translate(points[i])
+                            multmatrix(rotate_from_to([0,0,1],v))
+                                rotate([0,0,45])
+                                cylinder(d=thickness, h=norm(v)+.001, $fn=4);
+                    }
+                    }
+}
+
 
 module ring(od, id, length){
     difference()
@@ -174,8 +204,8 @@ module ring(od, id, length){
 
 
 
-translate([-30, 12.5,70])
-rotate([0,180,0])
+//translate([-30, 12.5,70])
+//rotate([0,180,0])
 frame();
 
 
@@ -230,3 +260,21 @@ module card(){
 
 //translate([0,500,110])  card();
 
+
+
+// Find the unitary vector with direction v. Fails if v=[0,0,0].
+function unit(v) = norm(v)>0 ? v/norm(v) : undef; 
+// Find the transpose of a rectangular matrix
+function transpose(m) = // m is any rectangular matrix of objects
+  [ for(j=[0:len(m[0])-1]) [ for(i=[0:len(m)-1]) m[i][j] ] ];
+// The identity matrix with dimension n
+function identity(n) = [for(i=[0:n-1]) [for(j=[0:n-1]) i==j ? 1 : 0] ];
+
+// computes the rotation with minimum angle that brings a to b
+// the code fails if a and b are opposed to each other
+function rotate_from_to(a,b) = 
+    let( axis = unit(cross(a,b)) )
+    axis*axis >= 0.99 ? 
+        transpose([unit(b), axis, cross(axis, unit(b))]) * 
+            [unit(a), axis, cross(axis, unit(a))] : 
+        identity(3);
