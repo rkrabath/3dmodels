@@ -1,16 +1,11 @@
-$fn=100;
 
-width_of_mounting_screws = 2.3; // TODO: Measure mounting screws
-
+width_of_mounting_screws = 2.3;
 
 module assembly_post(width, depth){
-    base_dim = width+5;
-    base_thickness = 1;
+//    base_dim = width+5;
+//    base_thickness = 1;
     translate([0,0,depth/2])
         cube([width,width,depth], center=true);
- //   translate([-base_dim/2,-base_dim/2,-base_thickness+ .001])
- //      cube([base_dim,base_dim,base_thickness]);
-    
 }
 
 module assembly_socket(width, depth){
@@ -22,48 +17,6 @@ module assembly_socket(width, depth){
 
 }
 
-
-
-
-module top_bracket(){
-    // Top bracket
-    depth_of_bracket = 20;
-    depth_of_mounting_hole = 9;
-    width_of_bracket = 44;
-
-    screw_x = depth_of_bracket - depth_of_mounting_hole;
-    screw_1_location = [screw_x, 9.9+3.2, -.01];
-    screw_2_location = [screw_x, 30.1+3.2, -.01];
-    screw_3_location = [screw_x+4.4, 16.5+3.2, -.01];
-    screw_4_location = [screw_x+4.4, 34.7+3.2, -.01];
-    difference(){
-        cube([depth_of_bracket, width_of_bracket, 5.4]);
-        union() {
-            translate(screw_1_location)
-                cylinder(r=width_of_mounting_screws, h=5.5);
-            translate(screw_2_location)
-                cylinder(r=width_of_mounting_screws, h=5.5);
-            translate(screw_3_location)
-                cylinder(r=width_of_mounting_screws, h=5.5);
-            translate(screw_4_location)
-                cylinder(r=width_of_mounting_screws, h=5.5);
-        }
-    }
-    
-    // Assembly sockets
-    translate([-5,-5+.01,0])
-        assembly_socket(5, 5.4);
-    translate([5,-5+.01,0])
-        assembly_socket(5, 5.4);
-    translate([15,-5+.01,0])
-        assembly_socket(5, 5.4);
-    translate([-5, 49-.01, 0])
-        assembly_socket(5, 5.4);
-    translate([5,49-.01,0])
-        assembly_socket(5, 5.4);
-    translate([15,49-.01,0])
-        assembly_socket(5, 5.4);
-}
 
 module bottom_mounting_plate(){
     width_of_mounting_plate = 12;
@@ -94,130 +47,6 @@ module bottom_mounting_plate(){
     
 }
 
-module bottom_front_bracket(){
-    width_of_bracket = 44;
-
-    difference(){
-        cube([50,width_of_bracket,12]);
-        union(){
-
-            
-            // Mounting holes for screws
-            translate([17,37,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02 );
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-            translate([17,15,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02 );
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-            translate([36,15,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02 );
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-        }
-    }
-    
-    // Frame Sockets
-    translate([2.5,-5,14.5]){
-        translate([5,0,0])
-            assembly_socket(5, 5.4);
-        translate([15,0,0])
-            assembly_socket(5, 5.4);
-        translate([25,0,0])
-            assembly_socket(5, 5.4);
-    }
-    // Support for sockets
-    difference(){
-        translate([2.5,0,14.5])
-            rotate([90,0,0])
-                rotate([0,0,-90])
-                    triangle(10, 14.5, 30);
-        union(){
-            translate([7,-10,0])
-                gothic_arch(5,5,5,30);
-            translate([14,-10,0])
-                gothic_arch(5,5,5,30);
-            translate([21,-10,0])
-                gothic_arch(5,5,5,30);
-            translate([28,-10,0])
-                gothic_arch(5,5,5,30);
-        }
-    }
-    
-    // Frame Sockets
-    translate([2.5,49-.01,14.5]){
-        translate([5, 0, 0])
-            assembly_socket(5, 5.4);
-        translate([15,0,0])
-            assembly_socket(5, 5.4);
-        translate([25,0,0])
-            assembly_socket(5, 5.4);
-    }
-    // Support for sockets
-    difference(){
-        translate([2.5, 44,14.5])
-            rotate([0,0,-90])
-                rotate([0,180,0])
-                    triangle(14.5, 10, 30);
-    
-        union(){
-            translate([7,43,0])
-                gothic_arch(5,5,5,30);
-            translate([14,43,0])
-                gothic_arch(5,5,5,30);
-            translate([21,43,0])
-                gothic_arch(5,5,5,30);
-            translate([28,43,0])
-                gothic_arch(5,5,5,30);
-        }
-    }
-
-}
-
-
-module bottom_middle_bracket(){
-    width_of_bracket = 44;
-
-    difference(){
-        cube([50,width_of_bracket,10]);
-        union(){
-            translate([15,15,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02);
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-            translate([36,15,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02);
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-        }
-    }
-}
-
-
-module bottom_back_bracket(){
-    width_of_bracket = 44;
-
-    difference(){
-        translate([5,0,0])
-        cube([50,width_of_bracket,12]);
-        union(){
-            translate([20,15,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02);
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-            translate([44,15,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02);
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-            translate([44,37,-8.01]){
-                rotate([0,0,30])translate([0,0,15])cylinder(r=width_of_mounting_screws+3, h=15.02);
-                cylinder(r=width_of_mounting_screws, h=30.02);
-            }
-        }
-    }
-}
-
 
 module strut(thickness, height){
     cube([thickness, thickness, height], center=true);
@@ -227,7 +56,6 @@ module strut(thickness, height){
     rotate([180,0,0])
     assembly_post(5, 5);
 }
-
 
 
 module triangle(side1, side2, thickness){
@@ -350,43 +178,6 @@ module ring(od, id, length){
 }
 
 
-
-
-//translate([-40,17,121])  card();
-
-//translate([-50,17,115])  top_bracket();
-
-difference(){
-    union(){
-//        translate([-35, 17, 0])
-//            bottom_front_bracket();
-//        translate([35, 17, 0])
-//            bottom_middle_bracket();
-//        translate([102, 17, 0])
-//            bottom_back_bracket();
-    }
-//    translate([-10-.001-4.5,42+.02,5+.01])  bottom_mounting_plate();
-    
-}
-
-//translate([-30, 9.2,115])
-//rotate([180,0,180])
-//frame(30,80,5);
-//translate([-30-2,9.2,20])
-//frame(50,90,5);
-
-translate([70,100,-63.5])rotate([90,0,0]){
-translate([0,51.1,0])
-translate([-30, 12.5,115])
-rotate([180,0,180])
-frame(30,80,5);
-translate([-2,51.1,0])
-translate([-30,12.5,20])
-frame(50,90,5);
-}
-
-
-
 module gothic_arch(width=20, straight_height=30, curve_height=30, depth=5){
     
     thickness = max(2,straight_height*.01);
@@ -410,7 +201,6 @@ module gothic_arch(width=20, straight_height=30, curve_height=30, depth=5){
     translate([0,depth/2,straight_height/2])
     cube([width+.7, depth, straight_height], center=true);
 }
-
 
 
 function incenter_point(A,B,C) = 
@@ -450,7 +240,6 @@ module plot3d(points, width, length) {
 }
 
 
-
 module card(){
     // screw plate
     cube([12.5,43.5,1]);
@@ -464,9 +253,6 @@ module card(){
     translate([35.5+12.5,25+11,-105])
         cube([112,2,15]);
 }
-
-
-
 
 
 // Find the unitary vector with direction v. Fails if v=[0,0,0].
